@@ -1,2 +1,2 @@
-export const SERVER_NAME = 'mintlify';
-export const SERVER_VERSION = '1.0.0';
+export const SERVER_NAME = '@amp-labs/mcp-docs-server';
+export const SERVER_VERSION = '0.0.1';

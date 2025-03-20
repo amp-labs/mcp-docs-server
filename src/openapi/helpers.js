@@ -39,6 +39,13 @@ export function getEndpointsFromOpenApi(specification) {
 }
 export function loadEnv() {
     try {
+        // First try loading from environment variables
+        const envVars = process.env;
+        if (Object.keys(envVars).length > 0) {
+            return envVars;
+        }
+
+        // Fall back to .env file if no env vars
         const envPath = path.join(fileURLToPath(import.meta.url), '../../..', '.env');
         if (fs.existsSync(envPath)) {
             const vars = dotenv.parse(fs.readFileSync(envPath));
