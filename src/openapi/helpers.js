@@ -42,6 +42,7 @@ export function loadEnv() {
         // First try loading from environment variables
         const envVars = process.env;
         if (Object.keys(envVars).length > 0) {
+            envVars['header_X-Api-Key_APIKEY'] = envVars.AMPERSAND_API_KEY;
             return envVars;
         }
 
@@ -49,6 +50,7 @@ export function loadEnv() {
         const envPath = path.join(fileURLToPath(import.meta.url), '../../..', '.env');
         if (fs.existsSync(envPath)) {
             const vars = dotenv.parse(fs.readFileSync(envPath));
+            vars['header_X-Api-Key_APIKEY'] = vars.AMPERSAND_API_KEY;
             return vars;
         }
     }

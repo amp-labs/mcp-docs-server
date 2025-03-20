@@ -1,13 +1,13 @@
 {
   "name": "@amp-labs/mcp-docs-server",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "type": "module",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js"
   },
   "author": "Ampersand",
-  "description": "MCP server for our docs",
+  "description": "MCP server for Ampersand docs",
   "dependencies": {
     "@mintlify/openapi-parser": "^0.0.7",
     "@mintlify/validation": "^0.1.320",
