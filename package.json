@@ -1,0 +1,20 @@
+{
+  "name": "@amp-labs/mcp-docs-server",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "author": "Ampersand",
+  "description": "MCP server for our docs",
+  "dependencies": {
+    "@mintlify/openapi-parser": "^0.0.7",
+    "@mintlify/validation": "^0.1.320",
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "axios": "^1.8.1",
+    "dashify": "^2.0.0",
+    "dotenv": "^16.4.7",
+    "trieve-ts-sdk": "^0.0.62"
+  }
+}
