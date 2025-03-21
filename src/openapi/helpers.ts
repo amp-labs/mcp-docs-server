@@ -1,11 +1,11 @@
-import { OpenApiToEndpointConverter, } from '@mintlify/validation';
+// @ts-nocheck
+import { OpenApiToEndpointConverter } from '@mintlify/validation';
 import dotenv from 'dotenv';
-import fs from 'node:fs';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import { z } from 'zod';
 import { dataSchemaArrayToZod, dataSchemaToZod } from './zod.js';
-export function convertStrToTitle(str) {
+import { CategorizedZodSchemas, Endpoint, ZodSchemas } from './types';
+
+export function convertStrToTitle(str: string): string {
     const spacedString = str.replace(/[-_]/g, ' ');
     const words = spacedString.split(/(?=[A-Z])|\s+/);
     const titleCasedWords = words.map((word) => {
@@ -13,7 +13,8 @@ export function convertStrToTitle(str) {
     });
     return titleCasedWords.join(' ');
 }
-export function findNextIteration(set, str) {
+
+export function findNextIteration(set: Set<string>, str: string): number {
     let count = 1;
     set.forEach((val) => {
         if (val.startsWith(`${str}---`)) {
@@ -22,8 +23,9 @@ export function findNextIteration(set, str) {
     });
     return count + 1;
 }
-export function getEndpointsFromOpenApi(specification) {
-    const endpoints = [];
+
+export function getEndpointsFromOpenApi(specification: any): Endpoint[] {
+    const endpoints: Endpoint[] = [];
     const paths = specification.paths;
     for (const path in paths) {
         const operations = paths[path];
@@ -31,58 +33,76 @@ export function getEndpointsFromOpenApi(specification) {
             if (method === 'parameters' || method === 'trace') {
                 continue;
             }
-            const endpoint = OpenApiToEndpointConverter.convert(specification, path, method, true);
+            const endpoint = OpenApiToEndpointConverter.convert(specification, path, method as any, true);
             endpoints.push(endpoint);
         }
     }
     return endpoints;
 }
-export function loadEnv() {
+
+export function loadEnv(): Record<string, string> {
     try {
         // First try loading from environment variables
-        const envVars = process.env;
+        const envVars = process.env as Record<string, string>;
         if (Object.keys(envVars).length > 0) {
             envVars['header_X-Api-Key_APIKEY'] = envVars.AMPERSAND_API_KEY;
             return envVars;
         }
 
         // Fall back to .env file if no env vars
-        const envPath = path.join(fileURLToPath(import.meta.url), '../../..', '.env');
-        if (fs.existsSync(envPath)) {
-            const vars = dotenv.parse(fs.readFileSync(envPath));
+        const envPath = globalThis.path.join(globalThis.fileURLToPath(import.meta.url), '../../..', '.env');
+        if (globalThis.fs.existsSync(envPath)) {
+            const vars = dotenv.parse(globalThis.fs.readFileSync(envPath));
             vars['header_X-Api-Key_APIKEY'] = vars.AMPERSAND_API_KEY;
             return vars;
         }
-    }
-    catch (error) {
+    } catch (error) {
         // if there's no env, the user will be prompted
         // for their auth info at runtime if necessary
         // (shouldn't happen either way)
     }
     return {};
 }
-function convertParameterSection(parameters, paramSection) {
+
+function convertParameterSection(parameters: Record<string, any>, paramSection: ZodSchemas): void {
     Object.entries(parameters).forEach(([key, value]) => {
         const schema = value.schema;
         paramSection[key] = dataSchemaArrayToZod(schema);
     });
 }
-function convertParametersAndAddToRelevantParamGroups(parameters, paths, queries, headers, cookies) {
+
+function convertParametersAndAddToRelevantParamGroups(
+    parameters: {
+        path: Record<string, any>;
+        query: Record<string, any>;
+        header: Record<string, any>;
+        cookie: Record<string, any>;
+    },
+    paths: ZodSchemas,
+    queries: ZodSchemas,
+    headers: ZodSchemas,
+    cookies: ZodSchemas
+): void {
     convertParameterSection(parameters.path, paths);
     convertParameterSection(parameters.query, queries);
     convertParameterSection(parameters.header, headers);
     convertParameterSection(parameters.cookie, cookies);
 }
-function convertSecurityParameterSection(securityParameters, securityParamSection, envVariables, location) {
+
+function convertSecurityParameterSection(
+    securityParameters: Record<string, any>,
+    securityParamSection: ZodSchemas,
+    envVariables: Record<string, string>,
+    location: string
+): void {
     Object.entries(securityParameters).forEach(([key, value]) => {
         if (value.type === 'oauth2') {
             return;
         }
-        let envKey;
+        let envKey: string;
         if (value.type === 'apiKey') {
             envKey = `${location}_${key}_APIKEY`;
-        }
-        else {
+        } else {
             envKey = `${location}_${key}_HTTP_${value.scheme}`;
         }
         if (envKey && !(envKey in envVariables)) {
@@ -90,31 +110,53 @@ function convertSecurityParameterSection(securityParameters, securityParamSectio
         }
     });
 }
-function convertSecurityParametersAndAddToRelevantParamGroups(securityParameters, queries, headers, cookies, envVariables) {
+
+function convertSecurityParametersAndAddToRelevantParamGroups(
+    securityParameters: {
+        query: Record<string, any>;
+        header: Record<string, any>;
+        cookie: Record<string, any>;
+    },
+    queries: ZodSchemas,
+    headers: ZodSchemas,
+    cookies: ZodSchemas,
+    envVariables: Record<string, string>
+): void {
     convertSecurityParameterSection(securityParameters.query, queries, envVariables, 'query');
     convertSecurityParameterSection(securityParameters.header, headers, envVariables, 'header');
     convertSecurityParameterSection(securityParameters.cookie, cookies, envVariables, 'cookie');
 }
-export function convertEndpointToCategorizedZod(endpoint) {
-    var _a, _b, _c;
+
+export function convertEndpointToCategorizedZod(endpoint: Endpoint): CategorizedZodSchemas {
     const envVariables = loadEnv();
-    const url = `${((_b = (_a = endpoint.servers) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.url) || ''}${endpoint.path}`;
+    const url = `${endpoint.servers?.[0]?.url || ''}${endpoint.path}`;
     const method = endpoint.method;
-    const paths = {};
-    const queries = {};
-    const headers = {};
-    const cookies = {};
-    let body = undefined;
+    const paths: ZodSchemas = {};
+    const queries: ZodSchemas = {};
+    const headers: ZodSchemas = {};
+    const cookies: ZodSchemas = {};
+    let body: ZodSchemas | undefined = undefined;
+
     convertParametersAndAddToRelevantParamGroups(endpoint.request.parameters, paths, queries, headers, cookies);
-    if ((_c = endpoint.request.security[0]) === null || _c === void 0 ? void 0 : _c.parameters) {
-        convertSecurityParametersAndAddToRelevantParamGroups(endpoint.request.security[0].parameters, queries, headers, cookies, envVariables);
+
+    if (endpoint.request.security[0]?.parameters) {
+        convertSecurityParametersAndAddToRelevantParamGroups(
+            endpoint.request.security[0].parameters,
+            queries,
+            headers,
+            cookies,
+            envVariables
+        );
     }
+
     const jsonBodySchema = endpoint.request.body['application/json'];
-    const bodySchemaArray = jsonBodySchema === null || jsonBodySchema === void 0 ? void 0 : jsonBodySchema.schemaArray;
-    const bodySchema = bodySchemaArray === null || bodySchemaArray === void 0 ? void 0 : bodySchemaArray[0];
+    const bodySchemaArray = jsonBodySchema?.schemaArray;
+    const bodySchema = bodySchemaArray?.[0];
+
     if (bodySchema) {
         const zodBodySchema = dataSchemaToZod(bodySchema);
         body = { body: zodBodySchema };
     }
+
     return { url, method, paths, queries, body, headers, cookies };
-}
+} 

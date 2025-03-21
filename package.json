@@ -2,9 +2,11 @@
   "name": "@amp-labs/mcp-docs-server",
   "version": "0.0.1",
   "type": "module",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "node src/index.js"
+    "build": "vite build",
+    "start": "node dist/index.js",
+    "dev": "vite"
   },
   "author": "Ampersand",
   "description": "MCP server for Ampersand docs",
@@ -18,11 +20,13 @@
     "trieve-ts-sdk": "^0.0.62"
   },
   "devDependencies": {
+    "@types/dashify": "^1.0.3",
     "@types/dotenv": "^8.2.0",
     "@types/minimist": "^1.2.5",
     "@types/node": "^22.13.5",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vite": "^5.1.4"
   }
 }

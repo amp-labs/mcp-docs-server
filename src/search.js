@@ -9,8 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { TrieveSDK } from 'trieve-ts-sdk';
 import { z } from 'zod';
-import { SUBDOMAIN } from './config.readonly.js';
-import { SERVER_URL } from './config.readonly.js';
+import { SUBDOMAIN, SERVER_URL } from './config.readonly';
 const DEFAULT_BASE_URL = 'https://api.mintlifytrieve.com';
 export function fetchSearchConfigurationAndOpenApi(subdomain) {
     return __awaiter(this, void 0, void 0, function* () {
