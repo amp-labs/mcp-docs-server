@@ -1,25 +1,37 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from "vite";
+import { VitePluginNode } from 'vite-plugin-node';
 
 export default defineConfig({
+  server: {
+    port: 3001
+  },
   build: {
+    outDir: './dist',
     lib: {
-      entry: './src/index.ts', // Adjust this path if your entry point is different
-      formats: ['es'],
-      fileName: 'index'
+      entry: './src/index.ts',
+      formats: ['cjs'],
+      fileName: (format) => `index.${format}`
     },
     rollupOptions: {
-      external: [
-        '@mintlify/openapi-parser',
-        '@mintlify/validation',
-        '@modelcontextprotocol/sdk',
-        'axios',
-        'dashify',
-        'dotenv',
-        'trieve-ts-sdk'
-      ]
+      external: ['express', 'dotenv', 'zod', 'trieve-ts-sdk', 'axios', 'dashify', 'mintlify-validation', 'mintlify-openapi-parser']
     },
-    outDir: 'dist',
     sourcemap: true,
-    minify: true
-  }
-}); 
+    target: 'node16'
+  },
+  plugins: [
+    ...VitePluginNode({
+      adapter: 'express',
+
+      // tell the plugin where is your project entry
+      appPath: './src/index.ts',
+
+      // Optional, default: 'viteNodeApp'
+      // the name of named export of you app from the appPath file
+      exportName: 'mcpApp',
+
+      // Optional, default: false
+      // if you want to init your app on boot, set this to true
+      initAppOnBoot: true,
+    })
+  ],
+});

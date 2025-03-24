@@ -9,7 +9,7 @@ interface FileOptions {
     type?: string;
 }
 
-const WebFile = class File extends globalThis.Blob {
+const WebFile = class File extends Blob {
     private _name: string;
     private _lastModified: number;
 

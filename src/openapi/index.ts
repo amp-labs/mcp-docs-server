@@ -2,6 +2,9 @@ import { validate } from '@mintlify/openapi-parser';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import axios, { isAxiosError } from 'axios';
 import dashify from 'dashify';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { convertEndpointToCategorizedZod, convertStrToTitle, findNextIteration, getEndpointsFromOpenApi, loadEnv } from './helpers.js';
 import { Endpoint, ToolResponse, ZodSchemas } from './types';
 
@@ -9,7 +12,7 @@ export async function createToolsFromOpenApi(server: Server): Promise<void> {
     let openapi: string;
     try {
         // @ts-ignore
-        openapi = globalThis.fs.readFileSync(globalThispath.join(globalThis.fileURLToPath(import.meta.url), '..', 'openapi.json'), 'utf8');
+        openapi = fs.readFileSync(path.join(fileURLToPath(import.meta.url), '..', 'openapi.json'), 'utf8');
     } catch (error) {
         // No OpenAPI file found, skip
         return;

@@ -1,8 +1,8 @@
 {
   "name": "@amp-labs/mcp-docs-server",
   "version": "0.0.1",
-  "type": "module",
-  "main": "dist/index.js",
+  "type": "commonjs",
+  "main": "dist/index.cjs",
   "scripts": {
     "build": "vite build",
     "start": "node dist/index.js",
@@ -15,18 +15,31 @@
     "@mintlify/validation": "^0.1.320",
     "@modelcontextprotocol/sdk": "^1.6.1",
     "axios": "^1.8.1",
+    "build": "^0.1.4",
     "dashify": "^2.0.0",
     "dotenv": "^16.4.7",
-    "trieve-ts-sdk": "^0.0.62"
+    "express": "^4.21.2",
+    "trieve-ts-sdk": "^0.0.62",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@esbuild-plugins/node-modules-polyfill": "^0.2.2",
     "@types/dashify": "^1.0.3",
     "@types/dotenv": "^8.2.0",
+    "@types/express": "^5.0.1",
     "@types/minimist": "^1.2.5",
     "@types/node": "^22.13.5",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
+    "events": "^3.3.0",
+    "process": "^0.11.10",
+    "rollup-plugin-node-polyfills": "^0.2.1",
+    "stream-browserify": "^3.0.0",
     "typescript": "^5.7.3",
-    "vite": "^5.1.4"
-  }
+    "vite": "^5.4.14",
+    "vite-plugin-node": "^5.0.0",
+    "vite-plugin-node-polyfills": "^0.23.0"
+  },
+  "packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af"
 }

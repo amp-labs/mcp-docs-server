@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import { z } from 'zod';
 import { dataSchemaArrayToZod, dataSchemaToZod } from './zod.js';
 import { CategorizedZodSchemas, Endpoint, ZodSchemas } from './types';
+import path from 'path';
 
 export function convertStrToTitle(str: string): string {
     const spacedString = str.replace(/[-_]/g, ' ');
@@ -50,9 +51,9 @@ export function loadEnv(): Record<string, string> {
         }
 
         // Fall back to .env file if no env vars
-        const envPath = globalThis.path.join(globalThis.fileURLToPath(import.meta.url), '../../..', '.env');
-        if (globalThis.fs.existsSync(envPath)) {
-            const vars = dotenv.parse(globalThis.fs.readFileSync(envPath));
+        const envPath = path.join(fileURLToPath(import.meta.url), '../../..', '.env');
+        if (fs.existsSync(envPath)) {
+            const vars = dotenv.parse(fs.readFileSync(envPath));
             vars['header_X-Api-Key_APIKEY'] = vars.AMPERSAND_API_KEY;
             return vars;
         }
