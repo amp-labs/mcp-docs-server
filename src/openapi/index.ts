@@ -11,9 +11,10 @@ import { Endpoint, ToolResponse, ZodSchemas } from './types';
 export async function createToolsFromOpenApi(server: Server): Promise<void> {
     let openapi: string;
     try {
-        // @ts-ignore
-        openapi = fs.readFileSync(path.join(fileURLToPath(import.meta.url), '..', 'openapi.json'), 'utf8');
+        const dirname = path.dirname(fileURLToPath(import.meta.url));
+        openapi = fs.readFileSync(path.join(dirname, 'openapi.json'), 'utf8');
     } catch (error) {
+        console.error('No OpenAPI file found, skipping tool creation');
         // No OpenAPI file found, skip
         return;
     }
