@@ -1,5 +1,5 @@
 {
-  "name": "@amp-labs/mcp-docs-server",
+  "name": "@amp-labs/mcp-server",
   "version": "0.0.3",
   "type": "commonjs",
   "main": "dist/index.js",
@@ -23,8 +23,6 @@
   "author": "Ampersand",
   "description": "MCP server for Ampersand docs",
   "dependencies": {
-    "@mintlify/openapi-parser": "^0.0.7",
-    "@mintlify/validation": "^0.1.320",
     "@modelcontextprotocol/sdk": "^1.6.1",
     "axios": "^1.8.1",
     "build": "^0.1.4",
