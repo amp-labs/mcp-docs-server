@@ -15,18 +15,12 @@
 
 # Ampersand MCP docs server 
 
-## Install dependencies
+## Use `npx` to automatically run the server 
 
-`pnpm i`
+This will start the server at http://localhost:3001
 
-## Build the MCP SSE server
+`npx @amp-labs/mcp-docs-server@latest`
 
-`pnpm build`
-
-
-## Start the server
-
-`pnpm start`
 
 
 ## Connecting to the mcp server from an MCP Client
@@ -49,6 +43,22 @@ To run the openapi tools you'd need to pass in the Ampersand API key, in this ca
 }
 
 ```
+
+# Building locally 
+
+### Install dependencies
+
+`pnpm i`
+
+### Build the MCP SSE server
+
+`pnpm build`
+
+
+### Start the server
+
+`pnpm start`
+
 
 ## Debugging & troubleshooting
  
