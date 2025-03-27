@@ -16,7 +16,8 @@ export async function createAuthTool(
     async ({ query }: { query: string }) => {
       let oAuthUrl = "";
       const consumerRef = crypto.randomUUID();
-      const groupRef = "mcp_server_client_" + String(consumerRef);
+      const groupRef = "mcp_server_client_" + process.env.AMPERSAND_GROUP_REF;
+      console.log("[DEBUG] groupRef", groupRef);
       const projectId = SERVER_AMPERSAND_PROJECT_ID;
       const options = {
         method: "POST",
