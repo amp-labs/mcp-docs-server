@@ -1,26 +1,49 @@
 import { z } from "zod";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { SERVER_AMPERSAND_PROJECT_ID } from "./settings.js";
 
-export async function createAuthTool(server: Server, provider: string): Promise<void> {
-    // @ts-ignore
-    server.tool('oauth', `Connect to ${provider} using the Ampersand OAuth flow`, {
-        query: z.string(),
-    }, async ({ query }: { query: string }) => {
-        const content = 'oauth tool'
+export async function createAuthTool(
+  server: Server,
+  provider: string
+): Promise<void> {
+  // @ts-ignore
+  server.tool(
+    "oauth",
+    `Connect to ${provider} using the Ampersand OAuth flow. The tool will return a clickablelink to the OAuth flow for the user to click.`,
+    {
+      query: z.string(),
+    },
+    async ({ query }: { query: string }) => {
+      let oAuthUrl = "";
+      const consumerRef = crypto.randomUUID();
+      const groupRef = "mcp_server_client_" + String(consumerRef);
+      const projectId = SERVER_AMPERSAND_PROJECT_ID;
+      const options = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: `{"provider":"${provider}","consumerRef":"${consumerRef}","groupRef":"${groupRef}","projectId":"${projectId}"}`,
+      };
 
-        return {
-            content,
-        };
-    });
+      try {
+        const response = await fetch(
+          "https://api.withampersand.com/v1/oauth-connect",
+          options
+        );
+        const data = await response.text();
+        console.log("[DEBUG] oauth response", data);
+        oAuthUrl = data;
+      } catch (err) {
+        console.error(err);
+      }
 
-    // @ts-ignore
-    server.tool('api-key', `Connect to ${provider} using an API key`, {
-        query: z.string(),
-    }, async ({ query }: { query: string }) => {
-        const content = 'api-key tool'
-
-        return {
-            content,
-        };
-    });
-} 
+      return {
+        content: [
+          {
+            type: "text",
+            text: oAuthUrl,
+          }
+        ],
+      };
+    }
+  );
+}
