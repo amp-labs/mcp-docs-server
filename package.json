@@ -27,6 +27,7 @@
     "axios": "^1.8.1",
     "build": "^0.1.4",
     "dashify": "^2.0.0",
+    "detect-port": "^2.1.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "trieve-ts-sdk": "^0.0.62",
