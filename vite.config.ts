@@ -27,8 +27,8 @@ export default defineConfig({
     outDir: './dist',
     lib: {
       entry: './src/index.ts',
-      formats: ['cjs'],
-      fileName: (format) => `index.${format}`
+      formats: ['es'],
+      fileName: (format) => `index.${format}.js`
     },
     rollupOptions: {
       external: ['express', 'dotenv', 'zod', 'trieve-ts-sdk', 'axios', 'dashify', 'mintlify-validation', 'mintlify-openapi-parser']
