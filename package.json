@@ -9,7 +9,7 @@
   "scripts": {
     "build": "vite build && cp src/openapi/openapi.json dist/openapi.json",
     "start": "node dist/index.js",
-    "gcloud:deploy": "gcloud functions deploy mcp-docs-server --runtime nodejs20 --region us-west1 --trigger-http --entry-point mcpDocsServer --allow-unauthenticated --source .",
+    "gcloud:deploy": "gcloud functions deploy mcp-docs-server --gen2 --runtime nodejs20 --region us-west1 --trigger-http --entry-point mcpDocsServer --allow-unauthenticated --source .",
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
     "publish": "npm publish --access public"
   },
