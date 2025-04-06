@@ -1,3 +1,4 @@
+import { HttpFunction } from '@google-cloud/functions-framework';
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './connect';
 import { initialize } from './initialize';
@@ -5,7 +6,7 @@ import { createToolsFromOpenApi } from './openapi/index';
 import { createSearchTool } from './search';
 import express from 'express';
 
-async function main(): Promise<express.Application> {
+async function createApp(): Promise<express.Application> {
     // @ts-ignore
     const server = initialize() as Server;
     await createSearchTool(server);
@@ -14,13 +15,18 @@ async function main(): Promise<express.Application> {
     return app;
 }
 
-let mcpApp: Promise<express.Application> | null = null;
+let mcpApp: express.Application | null = null;
 
-try {
-    mcpApp = main();
-} catch (error: any) {
-    console.error('Fatal error in trying to initialize MCP server: ', error);
-    process.exit(1);
-}
-
-export { mcpApp };
+// Cloud Function entry point
+export const mcpDocsServer = async (req: any, res: any) => {
+    try {
+        if (!mcpApp) {
+            mcpApp = await createApp();
+        }
+        // Forward the request to the Express app
+        return mcpApp(req, res);
+    } catch (error: any) {
+        console.error('Error handling request:', error);
+        res.status(500).send('Internal Server Error');
+    }
+};
