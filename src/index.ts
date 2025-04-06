@@ -1,7 +1,6 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { connectServer } from './connect';
 import { initialize } from './initialize';
-import { createToolsFromOpenApi } from './openapi/index';
 import { createSearchTool } from './search';
 import express from 'express';
 
@@ -9,7 +8,6 @@ async function main(): Promise<express.Application> {
     // @ts-ignore
     const server = initialize() as Server;
     await createSearchTool(server);
-    await createToolsFromOpenApi(server);
     const app = connectServer(server);
     return app;
 }
