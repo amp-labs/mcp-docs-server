@@ -3,35 +3,36 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import express, { Request, Response } from 'express';
 import { detect } from 'detect-port';
 
+/**
+ * Similar to https://github.com/modelcontextprotocol/typescript-sdk/pull/197/files
+ */
 class TransportManager {
     private transports: Map<string, SSEServerTransport>;
-    private connectionCounter: number;
 
     constructor() {
         this.transports = new Map();
-        this.connectionCounter = 0;
     }
 
     addTransport(transport: SSEServerTransport, res: Response): string {
-        const connectionId = `connection-${++this.connectionCounter}`;
-        this.transports.set(connectionId, transport);
+        const sessionId = transport.sessionId;
+        this.transports.set(sessionId, transport);
         
         // Set up cleanup when response ends
         res.on('close', () => {
-            this.removeTransport(connectionId);
+            this.removeTransport(sessionId);
         });
         
-        return connectionId;
+        return sessionId;
     }
 
-    removeTransport(connectionId: string) {
-        if (this.transports.has(connectionId)) {
-            this.transports.delete(connectionId);
+    removeTransport(sessionId: string) {
+        if (this.transports.has(sessionId)) {
+            this.transports.delete(sessionId);
         }
     }
 
-    getTransport(connectionId: string): SSEServerTransport | undefined {
-        return this.transports.get(connectionId);
+    getTransport(sessionId: string): SSEServerTransport | undefined {
+        return this.transports.get(sessionId);
     }
 
     getAllTransports(): SSEServerTransport[] {
@@ -56,10 +57,7 @@ export async function connectServer(server: Server): Promise<express.Application
             res.setHeader('Connection', 'keep-alive');
             
             const transport = new SSEServerTransport('/messages', res);
-            const connectionId = transportManager.addTransport(transport, res);
-            
-            // Set connection ID in response header
-            res.setHeader('X-Connection-Id', connectionId);
+            const sessionId = transportManager.addTransport(transport, res);
             
             await server.connect(transport);
         } catch (error) {
@@ -69,10 +67,10 @@ export async function connectServer(server: Server): Promise<express.Application
     });
 
     app.post('/messages', async (req: Request, res: Response) => {
-        const connectionId = req.headers['x-connection-id'] as string;
+        const connectionId = req.query.sessionId as string;
         
         if (!connectionId) {
-            res.status(400).json({ error: 'Missing connection ID header' });
+            res.status(400).json({ error: 'Missing connection ID param' });
             return;
         }
 
