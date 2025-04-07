@@ -69,6 +69,7 @@ export async function connectServer(server: Server): Promise<express.Application
     app.post('/messages', async (req: Request, res: Response) => {
         const connectionId = req.query.sessionId as string;
         
+        console.log('Connection ID', connectionId);
         if (!connectionId) {
             res.status(400).json({ error: 'Missing connection ID param' });
             return;
@@ -76,12 +77,12 @@ export async function connectServer(server: Server): Promise<express.Application
 
         const transport = transportManager.getTransport(connectionId);
         
+
         if (transport) {
             try {
-                await transport.handlePostMessage(req, res);
+                await transport.handlePostMessage(req, res, req.body);
             } catch (error) {
-                console.error('Error handling POST message:', error);
-                res.status(500).json({ error: 'Error handling POST message' });
+                console.error('Error handling POST message for connectionId:', connectionId, error);
                 
                 // If there's a critical error, clean up the transport
                 if (error instanceof Error && error.message.includes('connection closed')) {
