@@ -13,35 +13,46 @@
 
 </div>
 
-# Ampersand MCP docs server 
-
-## Use `npx` to automatically run the server 
-
-This will start the server at http://localhost:3001
-
-`npx @amp-labs/mcp-docs-server@latest`
-
-
 
 ## Connecting to the mcp server from an MCP Client
 
 Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.json` when using Claude desktop.
 
-> [Optional] To run the openapi tools you'd need to pass in the Ampersand API key as an argument 
-
 > Note: This server runs in HTTP SSE mode 
+
+#### When using the official hosted mcp server 
 
 ```
 {
   "mcpServers": {
     "@amp-labs/mcp-docs-server": {
-      "url": "http://localhost:3001/sse",
-      "env": {
-        "AMPERSAND_API_KEY": "<AMP_KEY>" // optional
-      }
+      "url": "https://mcp-docs-server-production.up.railway.app/sse" 
     }
   }
 }
+````
+
+#### When running the docs server locally
+```
+{
+  "mcpServers": {
+    "@amp-labs/mcp-docs-server": {
+      "url": "http://localhost:3001/sse"
+    }
+  }
+}
+
+```
+
+
+# Ampersand MCP docs server 
+
+## Use `npx` to automatically run the server locally
+
+This will start the server at http://localhost:3001
+
+`npx @amp-labs/mcp-docs-server@latest`
+
 
 ```
 
