@@ -26,7 +26,7 @@ Add the following in your `mcp.json` in cursor IDE or `claude_desktop_config.jso
 {
   "mcpServers": {
     "@amp-labs/mcp-docs-server": {
-      "url": "https://mcp-docs-server-production.up.railway.app/sse" 
+      "url": "https://mcp-docs.withampersand.com/sse" 
     }
   }
 }
