@@ -18,6 +18,7 @@ interface SearchResult {
 
 const DEFAULT_BASE_URL = "https://api.mintlifytrieve.com";
 
+
 export async function fetchSearchConfigurationAndOpenApi(
   subdomain: string
 ): Promise<SearchConfig> {
