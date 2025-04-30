@@ -1,4 +1,5 @@
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import express, { Request, Response } from 'express';
 import { detect } from 'detect-port';
@@ -41,7 +42,13 @@ class TransportManager {
 }
 
 const DEFAULT_PORT = 3001;
-export async function connectServer(server: Server): Promise<express.Application> {
+export async function connectServer(server: Server, useStdioTransport: boolean): Promise<express.Application | undefined> {
+    if (useStdioTransport) {
+        console.log('Connecting to MCP server over stdio');
+        const transport = new StdioServerTransport();
+        await server.connect(transport);
+        return;
+    }
     const app = express();
     const port = await detect(DEFAULT_PORT);
     const transportManager = new TransportManager();

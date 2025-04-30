@@ -4,15 +4,18 @@ import { initialize } from './initialize';
 import { createSearchTool } from './search';
 import express from 'express';
 
-async function main(): Promise<express.Application> {
+const args = process.argv.slice(2);
+const useStdioTransport = args.includes('--transport') && args[args.indexOf('--transport') + 1] === 'stdio';
+
+async function main(): Promise<express.Application | undefined> {
     // @ts-ignore
     const server = initialize() as Server;
     await createSearchTool(server);
-    const app = connectServer(server);
+    const app = connectServer(server, useStdioTransport);
     return app;
 }
 
-let mcpApp: Promise<express.Application> | null = null;
+let mcpApp: Promise<express.Application | undefined> | null = null;
 
 try {
     mcpApp = main();
