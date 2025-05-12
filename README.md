@@ -54,7 +54,6 @@ This will start the server at http://localhost:3001
 `npx @amp-labs/mcp-docs-server@latest`
 
 
-```
 
 # Building locally 
 
