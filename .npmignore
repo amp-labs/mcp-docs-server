@@ -1,0 +1,31 @@
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Config files
+.eslintrc.json
+.prettierrc
+commitlint.config.js
+tsconfig.json
+vite.config.ts
+.releaserc.json
+
+# Git and CI
+.git/
+.github/
+.husky/
+
+# Documentation
+CONTRIBUTING.md
+*.md
+!README.md
+
+# Development files
+node_modules/
+.env
+*.log
+.DS_Store
+
+# Build artifacts that shouldn't be published
+*.map 
