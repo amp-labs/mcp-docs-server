@@ -18,7 +18,9 @@ interface SearchResult {
 
 const DEFAULT_BASE_URL = 'https://api.mintlifytrieve.com';
 
-export async function fetchSearchConfigurationAndOpenApi(subdomain: string): Promise<SearchConfig> {
+export async function fetchSearchConfigurationAndOpenApi(
+  subdomain: string,
+): Promise<SearchConfig> {
   try {
     const url = `${SERVER_URL}/api/mcp/config/${subdomain}`;
     const response = await fetch(url, { method: 'GET' });
@@ -45,7 +47,10 @@ export async function fetchSearchConfigurationAndOpenApi(subdomain: string): Pro
   }
 }
 
-async function search(query: string, config: SearchConfig): Promise<SearchResult[]> {
+async function search(
+  query: string,
+  config: SearchConfig,
+): Promise<SearchResult[]> {
   const trieve = new TrieveSDK({
     apiKey: config.trieveApiKey,
     datasetId: config.trieveDatasetId,
@@ -64,7 +69,7 @@ async function search(query: string, config: SearchConfig): Promise<SearchResult
     throw new Error('No results found');
   }
 
-  return data.chunks.map(result => {
+  return data.chunks.map((result) => {
     const chunk = result.chunk as ChunkMetadata & {
       metadata: { title: string };
       chunk_html: string;
@@ -94,12 +99,12 @@ export async function createSearchTool(server: Server): Promise<void> {
             '\n    API references\n' +
             '\n    Concepts and explanations\n' +
             '\n    Troubleshooting steps\n' +
-            '\n    Best practices'
+            '\n    Best practices',
         ),
     },
     async ({ query }: { query: string }) => {
       const results = await search(query, config);
-      const content = results.map(result => {
+      const content = results.map((result) => {
         const { title, content, link } = result;
         const text = `Title: ${title}\nContent: ${content}\nLink: ${link}`;
         return {
@@ -111,6 +116,6 @@ export async function createSearchTool(server: Server): Promise<void> {
       return {
         content,
       };
-    }
+    },
   );
 }
