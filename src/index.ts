@@ -6,7 +6,8 @@ import express from 'express';
 
 const args = process.argv.slice(2);
 const useStdioTransport =
-  args.includes('--transport') && args[args.indexOf('--transport') + 1] === 'stdio';
+  args.includes('--transport') &&
+  args[args.indexOf('--transport') + 1] === 'stdio';
 
 async function main(): Promise<express.Application | undefined> {
   // @ts-expect-error - initialize() returns unknown type, needs casting

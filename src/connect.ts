@@ -44,7 +44,7 @@ class TransportManager {
 const DEFAULT_PORT = 3001;
 export async function connectServer(
   server: Server,
-  useStdioTransport: boolean
+  useStdioTransport: boolean,
 ): Promise<express.Application | undefined> {
   if (useStdioTransport) {
     console.log('Connecting to MCP server over stdio');
@@ -91,10 +91,17 @@ export async function connectServer(
       try {
         await transport.handlePostMessage(req, res, req.body);
       } catch (error) {
-        console.error('Error handling POST message for connectionId:', connectionId, error);
+        console.error(
+          'Error handling POST message for connectionId:',
+          connectionId,
+          error,
+        );
 
         // If there's a critical error, clean up the transport
-        if (error instanceof Error && error.message.includes('connection closed')) {
+        if (
+          error instanceof Error &&
+          error.message.includes('connection closed')
+        ) {
           transportManager.removeTransport(connectionId);
         }
       }
@@ -106,7 +113,7 @@ export async function connectServer(
   app.listen(port, () => {
     if (port !== DEFAULT_PORT) {
       console.error(
-        `Port ${DEFAULT_PORT} is already in use. MCP Server running on SSE at http://localhost:${port}`
+        `Port ${DEFAULT_PORT} is already in use. MCP Server running on SSE at http://localhost:${port}`,
       );
     } else {
       console.error(`MCP Server running on SSE at http://localhost:${port}`);
