@@ -28,7 +28,7 @@
   "dependencies": {
     "@mintlify/openapi-parser": "^0.0.7",
     "@mintlify/validation": "^0.1.320",
-    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@modelcontextprotocol/sdk": "^1.17.3",
     "axios": "^1.8.1",
     "build": "^0.1.4",
     "dashify": "^2.0.0",
