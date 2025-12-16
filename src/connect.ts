@@ -31,8 +31,15 @@ export async function connectServer(
   // Increase JSON payload limit to handle larger messages
   app.use(express.json({ limit: '10mb' }));
 
+  // Request logging middleware - log EVERY incoming request
+  app.use((req, _res, next) => {
+    logger.log(`Incoming request: ${req.method} ${req.path}`);
+    next();
+  });
+
   // Health check endpoint for Railway
   app.get('/health', (_req: Request, res: Response) => {
+    logger.log('Health check endpoint hit');
     res.status(200).json({ status: 'ok', service: 'mcp-docs-server' });
   });
 
@@ -62,12 +69,17 @@ export async function connectServer(
     }
   });
 
-  app.listen(port, host, () => {
+  const httpServer = app.listen(port, host, () => {
     logger.log(
       `MCP Server running on Streamable HTTP at http://${host}:${port}/mcp`,
     );
     logger.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
     logger.log(`PORT env var: ${process.env.PORT || 'not set'}`);
+  });
+
+  // Add error handler for HTTP server
+  httpServer.on('error', (error: Error) => {
+    logger.error('HTTP Server error:', error);
   });
 
   return app;
