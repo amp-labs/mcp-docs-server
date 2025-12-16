@@ -6,5 +6,8 @@ node_modules
 .DS_Store
 src
 *.md
+!README.md
 .github
 .husky
+!settings.js
+!settings.d.ts
