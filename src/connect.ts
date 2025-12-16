@@ -21,9 +21,12 @@ export async function connectServer(
 
   const app = express();
   // Use Railway's PORT env var if available, otherwise detect available port
+  // Railway and other cloud providers require PORT to be used
   const port = process.env.PORT
     ? parseInt(process.env.PORT, 10)
     : await detect(DEFAULT_PORT);
+
+  const host = process.env.HOST || '0.0.0.0'; // Bind to all interfaces for Railway
 
   // Increase JSON payload limit to handle larger messages
   app.use(express.json({ limit: '10mb' }));
@@ -59,16 +62,12 @@ export async function connectServer(
     }
   });
 
-  app.listen(port, () => {
-    if (port !== DEFAULT_PORT) {
-      logger.log(
-        `Port ${DEFAULT_PORT} is already in use. MCP Server running on Streamable HTTP at http://localhost:${port}/mcp`,
-      );
-    } else {
-      logger.log(
-        `MCP Server running on Streamable HTTP at http://localhost:${port}/mcp`,
-      );
-    }
+  app.listen(port, host, () => {
+    logger.log(
+      `MCP Server running on Streamable HTTP at http://${host}:${port}/mcp`,
+    );
+    logger.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    logger.log(`PORT env var: ${process.env.PORT || 'not set'}`);
   });
 
   return app;
