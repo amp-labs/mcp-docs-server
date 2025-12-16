@@ -3,6 +3,7 @@ import { connectServer } from './connect';
 import { initialize } from './initialize';
 import { createSearchTool } from './search';
 import express from 'express';
+import { logger } from './logger.js';
 
 const args = process.argv.slice(2);
 const useStdioTransport =
@@ -22,7 +23,7 @@ let mcpApp: Promise<express.Application | undefined> | null = null;
 try {
   mcpApp = main();
 } catch (error: any) {
-  console.error('Fatal error in trying to initialize MCP server: ', error);
+  logger.error('Fatal error in trying to initialize MCP server: ', error);
   process.exit(1);
 }
 

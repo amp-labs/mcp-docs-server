@@ -3,6 +3,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import express, { Request, Response } from 'express';
 import { detect } from 'detect-port';
+import { logger } from './logger.js';
 
 /**
  * Similar to https://github.com/modelcontextprotocol/typescript-sdk/pull/197/files
@@ -47,17 +48,23 @@ export async function connectServer(
   useStdioTransport: boolean,
 ): Promise<express.Application | undefined> {
   if (useStdioTransport) {
-    console.log('Connecting to MCP server over stdio');
+    logger.log('Connecting to MCP server over stdio');
     const transport = new StdioServerTransport();
     await server.connect(transport);
     return;
   }
   const app = express();
-  const port = await detect(DEFAULT_PORT);
+  // Use Railway's PORT env var if available, otherwise detect available port
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) : await detect(DEFAULT_PORT);
   const transportManager = new TransportManager();
 
   // Increase JSON payload limit to handle larger messages
   app.use(express.json({ limit: '10mb' }));
+
+  // Health check endpoint for Railway
+  app.get('/health', (req: Request, res: Response) => {
+    res.status(200).json({ status: 'ok', service: 'mcp-docs-server' });
+  });
 
   app.get('/sse', async (req: Request, res: Response) => {
     try {
@@ -71,7 +78,7 @@ export async function connectServer(
 
       await server.connect(transport);
     } catch (error) {
-      console.error('Error establishing SSE connection:', error);
+      logger.error('Error establishing SSE connection:', error);
       res.status(500).json({ error: 'Failed to establish SSE connection' });
     }
   });
@@ -79,7 +86,7 @@ export async function connectServer(
   app.post('/messages', async (req: Request, res: Response) => {
     const connectionId = req.query.sessionId as string;
 
-    console.log('Connection ID', connectionId);
+    logger.log('Connection ID', connectionId);
     if (!connectionId) {
       res.status(400).json({ error: 'Missing connection ID param' });
       return;
@@ -91,7 +98,7 @@ export async function connectServer(
       try {
         await transport.handlePostMessage(req, res, req.body);
       } catch (error) {
-        console.error(
+        logger.error(
           'Error handling POST message for connectionId:',
           connectionId,
           error,
@@ -112,11 +119,11 @@ export async function connectServer(
 
   app.listen(port, () => {
     if (port !== DEFAULT_PORT) {
-      console.error(
+      logger.log(
         `Port ${DEFAULT_PORT} is already in use. MCP Server running on SSE at http://localhost:${port}`,
       );
     } else {
-      console.error(`MCP Server running on SSE at http://localhost:${port}`);
+      logger.log(`MCP Server running on SSE at http://localhost:${port}`);
     }
   });
 
