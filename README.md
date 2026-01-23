@@ -1,3 +1,12 @@
+**THIS REPO HAS BEEN DEPRECATED**
+
+To use our new docs MCP server in Claude Code, run
+
+```
+claude mcp add ampersand-docs-server --transport http "https://docs.withampersand.com/mcp"
+```
+---
+
 <br/>
 <div align="center">
     <a href="https://www.withampersand.com/?utm_source=github&utm_medium=readme&utm_campaign=mcp-docs-server&utm_content=logo">
