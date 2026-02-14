@@ -6,6 +6,10 @@
   "bin": {
     "mcp-docs-server": "./dist/index.js"
   },
+  "engines": {
+    "node": ">=18"
+  },
+  "packageManager": "pnpm@9.0.0",
   "scripts": {
     "build": "vite build",
     "start": "node dist/index.js",
@@ -74,7 +78,9 @@
     "vite-plugin-node-polyfills": "^0.23.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "settings.js",
+    "settings.d.ts"
   ],
   "lint-staged": {
     "*.{js,ts}": [

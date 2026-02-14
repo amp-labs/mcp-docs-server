@@ -1,0 +1,13 @@
+node_modules
+.git
+.env.local
+.env.*.local
+*.log
+.DS_Store
+src
+*.md
+!README.md
+.github
+.husky
+!settings.js
+!settings.d.ts
